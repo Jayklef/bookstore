@@ -2,7 +2,9 @@ package com.jayklef.book_app.controller;
 
 import com.jayklef.book_app.entity.Book;
 import com.jayklef.book_app.repository.BookRepository;
+import com.jayklef.book_app.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,29 +17,32 @@ public class BookController {
     @Autowired
     BookRepository bookRepository;
 
+    @Autowired
+    BookService bookService;
+
     @PostMapping("/books")
-    public Book createBook(@RequestBody Book book){
-        Book savedBook = bookRepository.save(book);
-        return savedBook;
+    public ResponseEntity<String> createBook(@RequestBody Book book){
+        Book savedBook = bookService.save(book);
+        return new ResponseEntity<>("savedBook", HttpStatus.CREATED);
     }
 
     @GetMapping("/books")
-    public List<Book> retrieveAllBook(){
-        return bookRepository.findAll();
+    public ResponseEntity<List<Book>> retrieveAllBook(){
+        List<Book> books = bookService.retrieveAllBook();
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @PutMapping("/books/{id}")
-    public Book updateBook(@PathVariable("id") Long id,
+    public ResponseEntity<String> updateBook(@PathVariable("id") Long id,
                            @RequestBody Book book){
-        book.setId(id);
-        return bookRepository.save(book);
+        Book bookToUpdate = bookService.updateBook(id, book);
+        return new ResponseEntity<>("Book with id of: " + id + "updated correctly", HttpStatus.OK);
     }
 
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<Entity> deleteBook(@PathVariable("id") Long id,
+    public ResponseEntity<String> deleteBook(@PathVariable("id") Long id,
                                              @RequestBody Book book){
-        book.setId(id);
-        bookRepository.delete(book);
-        return ResponseEntity.ok().build();
+        Book bookToDelete = bookService.deleteBook(id, book);
+        return  new ResponseEntity<>("Book deleted successfully", HttpStatus.OK);
     }
 }
