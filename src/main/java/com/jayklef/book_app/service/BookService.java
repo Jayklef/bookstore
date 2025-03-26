@@ -9,7 +9,7 @@ public interface BookService {
 
     List<Book> retrieveAllBook();
 
-    Book updateBook(Long id, Book book);
+    boolean updateBook(Long id, Book book);
 
     Book deleteBook(Long id, Book book);
 }
