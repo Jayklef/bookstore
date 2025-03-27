@@ -15,9 +15,6 @@ import java.util.List;
 public class BookController {
 
     @Autowired
-    BookRepository bookRepository;
-
-    @Autowired
     BookService bookService;
 
     @PostMapping("/books")
@@ -44,9 +41,11 @@ public class BookController {
     }
 
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<String> deleteBook(@PathVariable("id") Long id,
-                                             @RequestBody Book book){
-        Book bookToDelete = bookService.deleteBook(id, book);
-        return  new ResponseEntity<>("Book deleted successfully", HttpStatus.OK);
+    public ResponseEntity<String> deleteBook(@PathVariable("id") Long id){
+        boolean isBookDeleted = bookService.deleteBook(id);
+        if (isBookDeleted){
+            return new ResponseEntity<>("Book with id of " + id + "deleted successfully", HttpStatus.OK);
+        }
+        return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
